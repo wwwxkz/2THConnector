@@ -6,6 +6,7 @@ import android.content.pm.PackageManager
 import android.os.Build
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.provider.Settings
 import android.util.Log
 
 private const val PERMISSION_REQUEST = 10
@@ -51,9 +52,9 @@ class MainActivity : AppCompatActivity() {
                     allSuccess = false
                     val requestAgain = Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && shouldShowRequestPermissionRationale(permissions[i])
                     if (requestAgain) {
-                        Log.d("Connector", "Permission denied")
+                        //Permission denied
                     } else {
-                        Log.d("Connector", " Go to settings and enable the permission")
+                        startActivity(Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS))
                     }
                 }
             }

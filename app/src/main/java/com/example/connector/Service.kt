@@ -7,11 +7,14 @@ import android.content.Intent
 import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
-import android.os.*
+import android.net.wifi.WifiManager
+import android.os.Bundle
+import android.os.IBinder
+import android.os.Looper
 import android.provider.Settings
-import android.util.Log
 import com.google.gson.Gson
 import org.jetbrains.anko.doAsync
+
 
 class Service : Service() {
     lateinit var locationManager: LocationManager
@@ -34,30 +37,30 @@ class Service : Service() {
     fun getLocationService(){
         Looper.prepare()
         while(true){
-            val location = getLocation()
+            val wifiManager = applicationContext.getSystemService(Context.WIFI_SERVICE) as WifiManager
+            val wInfo = wifiManager.connectionInfo
+            var macAddress = wInfo.macAddress
 
-            class LocationModel {
-                var lat = 2.2
-                var lon = 2.2
-            }
-            val locationObject = LocationModel()
-            locationObject.lat = location[0]
-            locationObject.lon = location[1]
-            val locationJson = Gson().toJson(locationObject)
+            val rule = Regex("[:]")
+            macAddress = rule.replace(macAddress, "")
+
+            var location = getLocation()
+            location.add(macAddress)
+
+            val json = Gson().toJson("")
 
             doAsync {
                 val http = Connector()
-                http.post(locationJson)
+                http.post(json, location)
             }
 
-//            Log.d("Service", "Lat: " + location[0].toString() + " Lon: " + location[1].toString())
-            Thread.sleep(5000)
+            Thread.sleep(3600000)
         }
         Looper.loop()
     }
 
     @SuppressLint("MissingPermission")
-    private fun getLocation() : Array<Double> {
+    private fun getLocation() : ArrayList<String> {
         locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
         hasGps = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
         hasNetwork = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
@@ -90,9 +93,9 @@ class Service : Service() {
 
             if(locationGps!= null && locationNetwork!= null){
                 if(locationGps!!.accuracy > locationNetwork!!.accuracy){
-                    return arrayOf<Double>(locationGps!!.latitude, locationGps!!.longitude)
+                    return arrayListOf(locationGps!!.latitude.toString(), locationGps!!.longitude.toString())
                 }else{
-                    return arrayOf<Double>(locationNetwork!!.latitude, locationNetwork!!.longitude)
+                    return arrayListOf(locationNetwork!!.latitude.toString(), locationNetwork!!.longitude.toString())
                 }
             }
 
@@ -100,7 +103,7 @@ class Service : Service() {
             startActivity(Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS))
         }
 
-        return arrayOf<Double>(locationGps!!.latitude, locationGps!!.longitude)
+        return arrayListOf(locationGps!!.latitude.toString(), locationGps!!.longitude.toString())
     }
 
 }
