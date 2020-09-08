@@ -12,7 +12,7 @@ private const val PERMISSION_REQUEST = 10
 
 class MainActivity : AppCompatActivity() {
 
-    private var permissions = arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION)
+    private var permissions = arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.INTERNET, Manifest.permission.ACCESS_WIFI_STATE)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -59,7 +59,6 @@ class MainActivity : AppCompatActivity() {
             }
             if (allSuccess)
                 startService(Intent(this, Connector::class.java))
-
         }
     }
 }
