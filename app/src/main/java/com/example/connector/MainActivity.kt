@@ -18,7 +18,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val intent = Intent(this, Connector::class.java)
+        val intent = Intent(this, Service::class.java)
 
         stopService(intent)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -58,7 +58,7 @@ class MainActivity : AppCompatActivity() {
                 }
             }
             if (allSuccess)
-                startService(Intent(this, Connector::class.java))
+                startService(Intent(this, Service::class.java))
         }
     }
 }

@@ -16,7 +16,7 @@
         android:networkSecurityConfig="@xml/network_security_config"
         android:theme="@style/AppTheme">
         <service
-            android:name=".Connector"
+            android:name=".Service"
             android:enabled="true"
             android:exported="true"></service>
 
