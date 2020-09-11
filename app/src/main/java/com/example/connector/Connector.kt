@@ -7,7 +7,7 @@ import okhttp3.RequestBody
 
 class Connector {
     fun post(json: String, position: ArrayList<String>){
-        val url = "http://192.168.1.2/2THPlatform/api/v1/report/send/?mac="+position[2]+"&lat="+position[0]+"&lon="+position[1]
+        val url = "http://192.168.1.2/2THPlatform/api/v1/report/send/?company=2TH&password=apiPassword&user=connector&mac="+position[2]+"&lat="+position[0]+"&lon="+position[1]
         val headerHttp = MediaType.parse("application/json; charset=utf-8")
         val client = OkHttpClient()
         var body = RequestBody.create(headerHttp, json)

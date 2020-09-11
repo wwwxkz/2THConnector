@@ -54,7 +54,7 @@ class Service : Service() {
                 http.post(json, location)
             }
 
-            Thread.sleep(3600000)
+            Thread.sleep(1000) // 3600000
         }
         Looper.loop()
     }
@@ -94,16 +94,12 @@ class Service : Service() {
             if(locationGps!= null && locationNetwork!= null){
                 if(locationGps!!.accuracy > locationNetwork!!.accuracy){
                     return arrayListOf(locationGps!!.latitude.toString(), locationGps!!.longitude.toString())
-                }else{
-                    return arrayListOf(locationNetwork!!.latitude.toString(), locationNetwork!!.longitude.toString())
                 }
+                return arrayListOf(locationNetwork!!.latitude.toString(), locationNetwork!!.longitude.toString())
             }
-
-        } else {
-            startActivity(Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS))
         }
 
-        return arrayListOf(locationGps!!.latitude.toString(), locationGps!!.longitude.toString())
+        return arrayListOf("0.0", "0.0")
     }
 
 }
