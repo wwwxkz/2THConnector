@@ -14,6 +14,9 @@ import android.os.Looper
 import android.provider.Settings
 import com.google.gson.Gson
 import org.jetbrains.anko.doAsync
+import java.net.NetworkInterface
+import java.util.*
+import kotlin.collections.ArrayList
 
 
 class Service : Service() {
@@ -37,9 +40,7 @@ class Service : Service() {
     fun getLocationService(){
         Looper.prepare()
         while(true){
-            val wifiManager = applicationContext.getSystemService(Context.WIFI_SERVICE) as WifiManager
-            val wInfo = wifiManager.connectionInfo
-            var macAddress = wInfo.macAddress
+            var macAddress = getMacAddress()
 
             val rule = Regex("[:]")
             macAddress = rule.replace(macAddress, "")
@@ -57,6 +58,30 @@ class Service : Service() {
             Thread.sleep(1000) // 3600000
         }
         Looper.loop()
+    }
+
+    fun getMacAddress(): String {
+        try {
+            val all = Collections.list(NetworkInterface.getNetworkInterfaces())
+            for (nif in all) {
+                if (!nif.getName().equals("wlan0", ignoreCase=true)) continue
+
+                val macBytes = nif.getHardwareAddress() ?: return ""
+
+                val res1 = StringBuilder()
+                for (b in macBytes) {
+                    res1.append(String.format("%02X:", b))
+                }
+
+                if (res1.length > 0) {
+                    res1.deleteCharAt(res1.length - 1)
+                }
+                return res1.toString()
+            }
+        } catch (ex: Exception) {
+        }
+
+        return "02:00:00:00:00:00"
     }
 
     @SuppressLint("MissingPermission")
@@ -96,6 +121,13 @@ class Service : Service() {
                     return arrayListOf(locationGps!!.latitude.toString(), locationGps!!.longitude.toString())
                 }
                 return arrayListOf(locationNetwork!!.latitude.toString(), locationNetwork!!.longitude.toString())
+            }
+
+            if(locationNetwork!= null){
+                return arrayListOf(locationNetwork!!.latitude.toString(), locationNetwork!!.longitude.toString())
+            }
+            if(locationGps!= null){
+                return arrayListOf(locationGps!!.latitude.toString(), locationGps!!.longitude.toString())
             }
         }
 

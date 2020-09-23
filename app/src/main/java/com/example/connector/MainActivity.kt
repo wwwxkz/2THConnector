@@ -7,7 +7,6 @@ import android.os.Build
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.Settings
-import android.util.Log
 
 private const val PERMISSION_REQUEST = 10
 
