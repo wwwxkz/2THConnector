@@ -124,15 +124,15 @@ class Service : Service() {
         hasGps = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
         hasNetwork = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
 
-        val listener = object : LocationListener {
-            override fun onLocationChanged(location: Location?) {
+        val listener = LocationListener {
+             fun onLocationChanged(location: Location?) {
                 if (location != null) {
                     locationGps = location
                 }
             }
-            override fun onStatusChanged(provider: String?, status: Int, extras: Bundle?) {}
-            override fun onProviderEnabled(provider: String?) {}
-            override fun onProviderDisabled(provider: String?) {}
+            fun onStatusChanged(provider: String?, status: Int, extras: Bundle?) {}
+            fun onProviderEnabled(provider: String?) {}
+            fun onProviderDisabled(provider: String?) {}
 
         }
 
@@ -169,3 +169,4 @@ class Service : Service() {
     }
 
 }
+
