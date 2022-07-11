@@ -13,4 +13,4 @@ It will be turned in a service and not appear as an app, if no user functions is
 ### Tested devices:
 - Asus zenfone max pro m1
 
-### This is a submodule of https://github.com/wwwxkz/2THPlatform
+### Meant to be used with https://github.com/wwwxkz/2THPlatform
