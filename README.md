@@ -1,4 +1,4 @@
-### Use 2THPlatform as README -> https://github.com/wwwxkz/2THPlatform
+### 2THConnector
 
 In ```app/src/main/java/com/example/connector/Connector.kt``` there is a hardcoded IP adress, it is the IP I use localy. When building the apk, keep in mind that this should be a public and static IP, a DNS is a better option if possible. 
 
@@ -12,3 +12,5 @@ It will be turned in a service and not appear as an app, if no user functions is
 
 ### Tested devices:
 - Asus zenfone max pro m1
+
+### This is a submodule of https://github.com/wwwxkz/2THPlatform
